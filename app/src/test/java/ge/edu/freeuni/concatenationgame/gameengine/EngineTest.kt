@@ -1,10 +1,9 @@
 package ge.edu.freeuni.concatenationgame.gameengine
 
 import android.content.Context
-import android.view.View
 import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.FixMethodOrder
 import org.junit.Test
 import org.junit.runners.MethodSorters
@@ -24,7 +23,7 @@ class EngineTest {
         }
         val constraintLayout: ConstraintLayout = getMockConstraintLayout(imageViews)
 
-        engine = engineOf(constraintLayout, getDrawableIds())
+        engine = engineOf(constraintLayout, getDrawableIds(),10)
 
         assertEquals(0, engine.numberOfClickedBoxes)
     }
@@ -38,7 +37,7 @@ class EngineTest {
         }
         val constraintLayout: ConstraintLayout = getMockConstraintLayout(imageViews)
 
-        engine = engineOf(constraintLayout, getDrawableIds())
+        engine = engineOf(constraintLayout, getDrawableIds(),10)
         engine.addLastClickedInfo(ViewImageIdPair(1, 1))
 
         assertEquals(1, engine.numberOfClickedBoxes)
@@ -52,74 +51,13 @@ class EngineTest {
             )
         }
         val constraintLayout: ConstraintLayout = getMockConstraintLayout(imageViews)
-        engine = engineOf(constraintLayout, getDrawableIds())
+        engine = engineOf(constraintLayout, getDrawableIds(),10)
         val viewImageIdPair = ViewImageIdPair(1, 1)
 
         engine.addLastClickedInfo(viewImageIdPair)
         engine.addLastClickedInfo(viewImageIdPair)
 
         assertEquals(1, engine.numberOfClickedBoxes)
-    }
-
-    @Test
-    fun should_beSameElements() {
-        val imageViews: List<ImageViewMock> = (0..3).map {
-            imageViewMockOf(
-                it
-            )
-        }
-        val constraintLayout: ConstraintLayout = getMockConstraintLayout(imageViews)
-        engine = engineOf(constraintLayout, getDrawableIds())
-        val viewImageIdPair = ViewImageIdPair(1, 1)
-
-        engine.addLastClickedInfo(viewImageIdPair)
-        engine.addLastClickedInfo(viewImageIdPair)
-        engine.addLastClickedInfo(viewImageIdPair)
-
-        assertTrue(engine.isAllElementsSameImage())
-    }
-
-    @Test
-    fun should_notBeSameElements() {
-        val imageViews: List<ImageViewMock> = (0..3).map {
-            imageViewMockOf(
-                it
-            )
-        }
-        val constraintLayout: ConstraintLayout = getMockConstraintLayout(imageViews)
-        engine = engineOf(constraintLayout, getDrawableIds())
-        val viewImageIdPair = ViewImageIdPair(1, 1)
-
-        engine.addLastClickedInfo(viewImageIdPair)
-        engine.addLastClickedInfo(viewImageIdPair)
-        engine.addLastClickedInfo(viewImageIdPair)
-        engine.addLastClickedInfo(
-            ViewImageIdPair(
-                viewImageIdPair.viewId + 1,
-                viewImageIdPair.ImageId + 1
-            )
-        )
-
-        assertFalse(engine.isAllElementsSameImage())
-    }
-
-    @Test
-    fun should_clearLastClickedInfo() {
-        val imageViews: List<ImageViewMock> = (0..3).map {
-            imageViewMockOf(
-                it
-            )
-        }
-        val constraintLayout: ConstraintLayout = getMockConstraintLayout(imageViews)
-        engine = engineOf(constraintLayout, getDrawableIds())
-        val viewImageIdPair = ViewImageIdPair(1, 1)
-        engine.addLastClickedInfo(viewImageIdPair)
-        engine.addLastClickedInfo(viewImageIdPair)
-        engine.addLastClickedInfo(viewImageIdPair)
-
-        engine.clearLastClickedIcons()
-
-        assertEquals(0, engine.numberOfClickedBoxes)
     }
 
     @Test
@@ -131,7 +69,7 @@ class EngineTest {
         }
         val constraintLayout: ConstraintLayout = getMockConstraintLayout(imageViews)
         val imageIds: List<Int> = getDrawableIds()
-        engine = engineOf(constraintLayout, imageIds)
+        engine = engineOf(constraintLayout, imageIds,10)
 
         val actualImageIds: List<Int> = imageViews.map { engine.getImageId(it.id) }.sorted()
         val expectedImageIdsSorted: List<Int> = imageIds.sorted()
@@ -140,26 +78,11 @@ class EngineTest {
     }
 
     @Test
-    fun should_setVisibilityToInvisibleToClickedImageViews() {
-        val imageViews: List<ImageViewMock> = (0..3).map { imageViewMockOf(it) }
-        val constraintLayout: ConstraintLayout = getMockConstraintLayout(imageViews)
-        val imageIds: List<Int> = getDrawableIds()
-        engine = engineOf(constraintLayout, imageIds)
-        engine.addLastClickedInfo(ViewImageIdPair(imageViews[0].id, 1))
-        engine.addLastClickedInfo(ViewImageIdPair(imageViews[1].id, 1))
-
-        engine.makeClickedViewsInvisible()
-
-        assertEquals(View.INVISIBLE, imageViews[0].visibility)
-        assertEquals(View.INVISIBLE, imageViews[1].visibility)
-    }
-
-    @Test
     fun numFlips_should_beZero_when_startingGame() {
         val imageViews: List<ImageViewMock> = (0..3).map { imageViewMockOf(it) }
         val constraintLayout: ConstraintLayout = getMockConstraintLayout(imageViews)
         val imageIds: List<Int> = getDrawableIds()
-        engine = engineOf(constraintLayout, imageIds)
+        engine = engineOf(constraintLayout, imageIds,10)
 
         assertEquals(0, engine.getNumFlips())
     }
@@ -169,7 +92,7 @@ class EngineTest {
         val imageViews: List<ImageViewMock> = (0..3).map { imageViewMockOf(it) }
         val constraintLayout: ConstraintLayout = getMockConstraintLayout(imageViews)
         val imageIds: List<Int> = getDrawableIds()
-        engine = engineOf(constraintLayout, imageIds)
+        engine = engineOf(constraintLayout, imageIds,10)
 
         engine.addLastClickedInfo(ViewImageIdPair(1, 1))
         engine.addLastClickedInfo(ViewImageIdPair(2, 2))
@@ -182,7 +105,7 @@ class EngineTest {
         val imageViews: List<ImageViewMock> = (0..3).map { imageViewMockOf(it) }
         val constraintLayout: ConstraintLayout = getMockConstraintLayout(imageViews)
         val imageIds: List<Int> = getDrawableIds()
-        engine = engineOf(constraintLayout, imageIds)
+        engine = engineOf(constraintLayout, imageIds,10)
 
         engine.addLastClickedInfo(ViewImageIdPair(1, 1))
         engine.addLastClickedInfo(ViewImageIdPair(1, 1))
@@ -197,24 +120,9 @@ class EngineTest {
         val constraintLayout: ConstraintLayout = getMockConstraintLayout(imageViews)
         val imageIds: List<Int> = getDrawableIds()
 
-        engine = engineOf(constraintLayout, imageIds)
+        engine = engineOf(constraintLayout, imageIds,10)
 
         assertEquals(12, engine.getNumCardsLeft())
-    }
-
-    @Test
-    fun numCardsLeft_should_reduce_when_makeClickedViewsInvisibleIsCalled() {
-        val imageViews: List<ImageViewMock> = (0..3).map { imageViewMockOf(it) }
-        val constraintLayout: ConstraintLayout = getMockConstraintLayout(imageViews)
-        val imageIds: List<Int> = getDrawableIds()
-        engine = engineOf(constraintLayout, imageIds)
-        engine.addLastClickedInfo(ViewImageIdPair(imageViews[0].id, 1))
-        engine.addLastClickedInfo(ViewImageIdPair(imageViews[1].id, 1))
-        engine.addLastClickedInfo(ViewImageIdPair(imageViews[2].id, 1))
-
-        engine.makeClickedViewsInvisible()
-
-        assertEquals(9, engine.getNumCardsLeft())
     }
 
     private fun getMockConstraintLayout(imageViews: List<ImageViewMock>): ConstraintLayout {

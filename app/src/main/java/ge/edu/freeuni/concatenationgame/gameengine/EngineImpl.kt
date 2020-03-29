@@ -7,16 +7,19 @@ import androidx.constraintlayout.widget.ConstraintLayout
 class EngineImpl(
     constraintLayout: ConstraintLayout,
     clickListener: View.OnClickListener,
-    imageIds: List<Int>
+    imageIds: List<Int>,
+    numOccurrencesToCheckEquality: Int
 ) : Engine {
 
     private val connections: MutableMap<Int, Int> = mutableMapOf()
     private val imageViews: MutableMap<Int, ImageView> = mutableMapOf()
     private val lastClickedIcons: MutableList<ViewImageIdPair> = mutableListOf()
+    private var numOccurrencesToCheckEquality: Int = 0
     private var numFlips: Int = 0
     private var numCardsLeft: Int = 12
 
     init {
+        this.numOccurrencesToCheckEquality = numOccurrencesToCheckEquality
         loadAllImageViews(constraintLayout)
         setAllImageViewsOnClickListener(clickListener)
         connectImageViewsToImages(imageIds)
@@ -63,7 +66,7 @@ class EngineImpl(
     override fun addLastClickedInfo(viewImageIdPair: ViewImageIdPair) {
         if (lastClickedIcons.isEmpty() || lastClickedIcons.last().viewId != viewImageIdPair.viewId) {
             lastClickedIcons.add(viewImageIdPair)
-            numFlips++;
+            numFlips++
         }
     }
 
@@ -71,23 +74,38 @@ class EngineImpl(
         get() = lastClickedIcons.size
 
     override fun getNumFlips(): Int {
-        return numFlips;
+        return numFlips
     }
 
     override fun getNumCardsLeft(): Int {
         return numCardsLeft
     }
 
+    override fun isViewClickedAlready(imageViewId: Int): Boolean {
+        return lastClickedIcons.any { it.viewId == imageViewId }
+    }
 
-    override fun isAllElementsSameImage(): Boolean {
+
+    private fun isFirstPartOfClickedOccurrencesSame(): Boolean {
         val count = lastClickedIcons.size
         val firstElementImageId = lastClickedIcons.first().ImageId
         return count == lastClickedIcons.asSequence()
+            .filterIndexed { index, _ -> index < numOccurrencesToCheckEquality }
             .map { it.ImageId }
             .count { it == firstElementImageId }
     }
 
-    override fun makeClickedViewsInvisible() {
+    override fun clearImagesIfMatchedOrElseSetOldImagesAndDrop(basicBoxImageId: Int) {
+        val isAllElementsSame: Boolean = isFirstPartOfClickedOccurrencesSame()
+        if (isAllElementsSame) {
+            makeClickedViewsInvisible()
+        } else {
+            setClickedViewsOldImage(basicBoxImageId)
+        }
+        lastClickedIcons.clear()
+    }
+
+    private fun makeClickedViewsInvisible() {
         numCardsLeft -= lastClickedIcons.size
         for (lastClickedIcon in lastClickedIcons) {
             val imageView: ImageView = imageViews[lastClickedIcon.viewId]!!
@@ -95,15 +113,12 @@ class EngineImpl(
         }
     }
 
-    override fun setClickedViewsOldImage(basicBoxImageId: Int) {
+    private fun setClickedViewsOldImage(basicBoxImageId: Int) {
         for (lastClickedIcon in lastClickedIcons) {
             val imageView: ImageView = imageViews[lastClickedIcon.viewId]!!
             imageView.setImageResource(basicBoxImageId)
         }
-    }
 
-    override fun clearLastClickedIcons() {
-        lastClickedIcons.clear()
     }
 
 }
@@ -111,14 +126,21 @@ class EngineImpl(
 fun engineOf(
     constraintLayout: ConstraintLayout,
     clickListener: View.OnClickListener,
-    imageIds: List<Int>
+    imageIds: List<Int>,
+    numOccurrencesToCheckEquality: Int
 ): EngineImpl {
-    return EngineImpl(constraintLayout, clickListener, imageIds)
+    return EngineImpl(constraintLayout, clickListener, imageIds, numOccurrencesToCheckEquality)
 }
 
 fun engineOf(
     constraintLayout: ConstraintLayout,
-    imageIds: List<Int>
+    imageIds: List<Int>,
+    numOccurrencesToCheckEquality: Int
 ): EngineImpl {
-    return engineOf(constraintLayout, View.OnClickListener { }, imageIds)
+    return engineOf(
+        constraintLayout,
+        View.OnClickListener { },
+        imageIds,
+        numOccurrencesToCheckEquality
+    )
 }

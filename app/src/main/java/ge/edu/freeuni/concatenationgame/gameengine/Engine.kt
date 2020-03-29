@@ -23,27 +23,9 @@ interface Engine {
      * number of current saved clicked boxes
      */
     val numberOfClickedBoxes: Int
-
-    /**
-     * @return true if all clicked elements have same image
-     */
-    fun isAllElementsSameImage(): Boolean
-
     /**
      * makes saved clicked ImageViews Disappear
      */
-    fun makeClickedViewsInvisible()
-
-    /**
-     * @param basicBoxImageId old basic image id
-     * sets all clicked imageVies old image
-     */
-    fun setClickedViewsOldImage(basicBoxImageId: Int)
-
-    /**
-     * clears saved clicked ImageViews
-     */
-    fun clearLastClickedIcons()
 
     /**
      * @return Number Of Flips
@@ -54,6 +36,18 @@ interface Engine {
      * @return number of cards left
      */
     fun getNumCardsLeft(): Int
+
+    /**
+     * @param imageViewId clicked ImageView id
+     * @return true if imageViewId is in clicked ImageViews List
+     */
+    fun isViewClickedAlready(imageViewId: Int): Boolean
+
+    /**
+     * @param basicBoxImageId old image
+     * clears images if matched, else draws old image on image views
+     */
+    fun clearImagesIfMatchedOrElseSetOldImagesAndDrop(basicBoxImageId: Int)
 }
 
 data class ViewImageIdPair(val viewId: Int, val ImageId: Int)

@@ -1,15 +1,6 @@
 package ge.edu.freeuni.concatenationgame.utils
 
 
-
-
-
-
-
-
-
-
-
 import android.animation.Animator
 import android.view.ViewAnimationUtils
 import android.widget.ImageView
