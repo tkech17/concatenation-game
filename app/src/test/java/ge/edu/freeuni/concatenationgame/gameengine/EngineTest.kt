@@ -154,6 +154,69 @@ class EngineTest {
         assertEquals(View.INVISIBLE, imageViews[1].visibility)
     }
 
+    @Test
+    fun numFlips_should_beZero_when_startingGame() {
+        val imageViews: List<ImageViewMock> = (0..3).map { imageViewMockOf(it) }
+        val constraintLayout: ConstraintLayout = getMockConstraintLayout(imageViews)
+        val imageIds: List<Int> = getDrawableIds()
+        engine = engineOf(constraintLayout, imageIds)
+
+        assertEquals(0, engine.getNumFlips())
+    }
+
+    @Test
+    fun should_increaseNumFlips_after_Clicking() {
+        val imageViews: List<ImageViewMock> = (0..3).map { imageViewMockOf(it) }
+        val constraintLayout: ConstraintLayout = getMockConstraintLayout(imageViews)
+        val imageIds: List<Int> = getDrawableIds()
+        engine = engineOf(constraintLayout, imageIds)
+
+        engine.addLastClickedInfo(ViewImageIdPair(1, 1))
+        engine.addLastClickedInfo(ViewImageIdPair(2, 2))
+
+        assertEquals(2, engine.getNumFlips())
+    }
+
+    @Test
+    fun should_notIncreaseNumFlips_after_ClickingAlreadyClickedCard() {
+        val imageViews: List<ImageViewMock> = (0..3).map { imageViewMockOf(it) }
+        val constraintLayout: ConstraintLayout = getMockConstraintLayout(imageViews)
+        val imageIds: List<Int> = getDrawableIds()
+        engine = engineOf(constraintLayout, imageIds)
+
+        engine.addLastClickedInfo(ViewImageIdPair(1, 1))
+        engine.addLastClickedInfo(ViewImageIdPair(1, 1))
+        engine.addLastClickedInfo(ViewImageIdPair(2, 2))
+
+        assertEquals(2, engine.getNumFlips())
+    }
+
+    @Test
+    fun numCardsLeft_should_beTwelve_when_gameStarts() {
+        val imageViews: List<ImageViewMock> = (0..3).map { imageViewMockOf(it) }
+        val constraintLayout: ConstraintLayout = getMockConstraintLayout(imageViews)
+        val imageIds: List<Int> = getDrawableIds()
+
+        engine = engineOf(constraintLayout, imageIds)
+
+        assertEquals(12, engine.getNumCardsLeft())
+    }
+
+    @Test
+    fun numCardsLeft_should_reduce_when_makeClickedViewsInvisibleIsCalled() {
+        val imageViews: List<ImageViewMock> = (0..3).map { imageViewMockOf(it) }
+        val constraintLayout: ConstraintLayout = getMockConstraintLayout(imageViews)
+        val imageIds: List<Int> = getDrawableIds()
+        engine = engineOf(constraintLayout, imageIds)
+        engine.addLastClickedInfo(ViewImageIdPair(imageViews[0].id, 1))
+        engine.addLastClickedInfo(ViewImageIdPair(imageViews[1].id, 1))
+        engine.addLastClickedInfo(ViewImageIdPair(imageViews[2].id, 1))
+
+        engine.makeClickedViewsInvisible()
+
+        assertEquals(9, engine.getNumCardsLeft())
+    }
+
     private fun getMockConstraintLayout(imageViews: List<ImageViewMock>): ConstraintLayout {
         val constraintLayout: ConstraintLayout = Mockito.mock(ConstraintLayout::class.java)
         Mockito.`when`(constraintLayout.childCount).thenReturn(imageViews.size)

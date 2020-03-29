@@ -45,8 +45,15 @@ interface Engine {
      */
     fun clearLastClickedIcons()
 
+    /**
+     * @return Number Of Flips
+     */
     fun getNumFlips(): Int
 
+    /**
+     * @return number of cards left
+     */
+    fun getNumCardsLeft(): Int
 }
 
 data class ViewImageIdPair(val viewId: Int, val ImageId: Int)

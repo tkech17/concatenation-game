@@ -14,6 +14,7 @@ class EngineImpl(
     private val imageViews: MutableMap<Int, ImageView> = mutableMapOf()
     private val lastClickedIcons: MutableList<ViewImageIdPair> = mutableListOf()
     private var numFlips: Int = 0
+    private var numCardsLeft: Int = 12
 
     init {
         loadAllImageViews(constraintLayout)
@@ -73,6 +74,10 @@ class EngineImpl(
         return numFlips;
     }
 
+    override fun getNumCardsLeft(): Int {
+        return numCardsLeft
+    }
+
 
     override fun isAllElementsSameImage(): Boolean {
         val count = lastClickedIcons.size
@@ -83,6 +88,7 @@ class EngineImpl(
     }
 
     override fun makeClickedViewsInvisible() {
+        numCardsLeft -= lastClickedIcons.size
         for (lastClickedIcon in lastClickedIcons) {
             val imageView: ImageView = imageViews[lastClickedIcon.viewId]!!
             imageView.visibility = View.INVISIBLE
