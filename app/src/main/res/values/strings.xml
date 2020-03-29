@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Ass1</string>
+    <string name="app_name">Concatenation Game</string>
     <string name="no_description">no_description</string>
     <string name="concatenation_game">Concatenation Game</string>
     <string name="start_game">Start Game</string>
