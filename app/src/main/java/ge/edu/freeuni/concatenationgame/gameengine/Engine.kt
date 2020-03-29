@@ -45,6 +45,8 @@ interface Engine {
      */
     fun clearLastClickedIcons()
 
+    fun getNumFlips(): Int
+
 }
 
 data class ViewImageIdPair(val viewId: Int, val ImageId: Int)

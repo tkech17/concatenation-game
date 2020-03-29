@@ -13,6 +13,7 @@ class EngineImpl(
     private val connections: MutableMap<Int, Int> = mutableMapOf()
     private val imageViews: MutableMap<Int, ImageView> = mutableMapOf()
     private val lastClickedIcons: MutableList<ViewImageIdPair> = mutableListOf()
+    private var numFlips: Int = 0
 
     init {
         loadAllImageViews(constraintLayout)
@@ -59,12 +60,18 @@ class EngineImpl(
     }
 
     override fun addLastClickedInfo(viewImageIdPair: ViewImageIdPair) {
-        if (lastClickedIcons.isEmpty() || lastClickedIcons.last().viewId != viewImageIdPair.viewId)
+        if (lastClickedIcons.isEmpty() || lastClickedIcons.last().viewId != viewImageIdPair.viewId) {
             lastClickedIcons.add(viewImageIdPair)
+            numFlips++;
+        }
     }
 
     override val numberOfClickedBoxes: Int
         get() = lastClickedIcons.size
+
+    override fun getNumFlips(): Int {
+        return numFlips;
+    }
 
 
     override fun isAllElementsSameImage(): Boolean {
